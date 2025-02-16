@@ -15,6 +15,19 @@ resource "digitalocean_droplet" "jenkins" {
   image   = "ubuntu-20-04-x64"
   name    = "jenkins"
   region  = "nyc2"
-  size    = "s-1vcpu-1gb"
+  size    = "s-1vcpu-2gb"
   ssh_keys = [data.digitalocean_ssh_key.pc.id]
+}
+
+resource "digitalocean_kubernetes_cluster" "primary" {
+  name   = "primary"
+  region = "nyc1"
+  # Grab the latest version slug from `doctl kubernetes options versions`
+  version = "1.32.1-do.0"
+
+  node_pool {
+    name       = "apps"
+    size       = "s-2vcpu-2gb"
+    node_count = 2
+  }
 }
